@@ -1,23 +1,22 @@
-from fastapi import Request, status
+from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from app.core.exceptions import ProjectNotFoundError, TaskNotFoundError
+from app.core.exceptions import AppError
+from app.schemas.error import ErrorDetail, ErrorResponse
 
 
-async def task_not_found_exception_handler(
+async def app_error_handler(
     _request: Request,
-    exc: TaskNotFoundError,
+    exc: AppError,
 ) -> JSONResponse:
-    return JSONResponse(
-        status_code=status.HTTP_404_NOT_FOUND,
-        content={"detail": str(exc)},
+    error_response = ErrorResponse(
+        error=ErrorDetail(
+            code=exc.code,
+            message=exc.message,
+        )
     )
 
-async def project_not_found_exception_handler(
-    _request: Request,
-    exc: ProjectNotFoundError,
-) -> JSONResponse:
     return JSONResponse(
-        status_code=status.HTTP_404_NOT_FOUND,
-        content={"detail": str(exc)},
+        status_code=exc.status_code,
+        content=error_response.model_dump(),
     )

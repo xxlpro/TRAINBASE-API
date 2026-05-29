@@ -8,4 +8,6 @@ __all__ = (
     "ProjectUpdate",
     "ProjectRead",
     "ProjectCreate",
+    "ErrorDetail",
+    "ErrorResponse",
 )

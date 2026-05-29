@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 
-from app.api.exception_handlers import task_not_found_exception_handler, project_not_found_exception_handler
+from app.api.exception_handlers import app_error_handler
 from app.api.routers.health import router as health_router
+from app.api.routers.projects import router as projects_router
 from app.api.routers.tasks import router as tasks_router
-from app.api.routers.projects import router as project_router
 from app.core.config import get_settings
-from app.core.exceptions import ProjectNotFoundError, TaskNotFoundError
+from app.core.exceptions import AppError
+
 
 settings = get_settings()
 
@@ -15,14 +16,10 @@ app = FastAPI(
 )
 
 app.add_exception_handler(
-    TaskNotFoundError,
-    task_not_found_exception_handler,
-)
-app.add_exception_handler(
-    ProjectNotFoundError,
-    project_not_found_exception_handler,
+    AppError,
+    app_error_handler,
 )
 
 app.include_router(health_router)
 app.include_router(tasks_router)
-app.include_router(project_router)
+app.include_router(projects_router)
