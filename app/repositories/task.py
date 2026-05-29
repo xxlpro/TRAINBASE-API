@@ -22,10 +22,20 @@ class TaskRepository:
         )
         return list(self.db.scalars(stmt).all())
 
+    def get_by_project_id(self, project_id: int) -> list[Task]:
+        stmt = (
+            select(Task)
+            .where(Task.project_id == project_id)
+            .order_by(Task.id)
+        )
+        return list(self.db.scalars(stmt).all())
+
     def create(self, payload: TaskCreate) -> Task:
+        
         task = Task(
             title=payload.title,
             description=payload.description,
+            project_id=payload.project_id,
         )
 
         self.db.add(task)
