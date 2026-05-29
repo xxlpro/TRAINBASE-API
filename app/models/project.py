@@ -1,7 +1,14 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.models.task import Task
+
 from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, String, Text, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 
@@ -32,3 +39,5 @@ class Project(Base):
         onupdate=func.now(),
         nullable=False,
     )
+
+    tasks: Mapped[list["Task"]] = relationship("Task", back_populates="project")

@@ -3,6 +3,7 @@ from fastapi import APIRouter, Query, Depends, status
 
 from app.api.dependencies import get_project_service
 from app.schemas.project import ProjectCreate, ProjectRead, ProjectUpdate
+from app.schemas.task import TaskRead
 from app.services.project import ProjectService
 
 
@@ -42,6 +43,17 @@ def get_projects(
     service: ProjectService = Depends(get_project_service),
 ):
     return service.get_projects(offset=offset, limit=limit)
+
+
+@router.get(
+        "/{project_id}/tasks",
+        response_model=list[TaskRead],
+)
+def get_project_tasks(
+    project_id: int,
+    service: ProjectService = Depends(get_project_service),
+):
+    return service.get_project_tasks(project_id)
 
 
 @router.patch(

@@ -6,12 +6,14 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 class TaskCreate(BaseModel):
     title: str = Field(min_length=1, max_length=255)
     description: str | None = None
+    project_id: int | None = None
 
 
 class TaskUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=255)
     description: str | None = None
     is_completed: bool | None = None
+    project_id: int | None = None
 
     @model_validator(mode="after")
     def validate_update_payload(self) -> "TaskUpdate":
@@ -32,6 +34,7 @@ class TaskRead(BaseModel):
     title: str
     description: str | None
     is_completed: bool
+    project_id: int | None
     created_at: datetime
     updated_at: datetime
 
