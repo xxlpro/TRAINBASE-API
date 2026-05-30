@@ -5,6 +5,7 @@ from app.api.dependencies import get_project_service
 from app.schemas.project import ProjectCreate, ProjectRead, ProjectUpdate
 from app.schemas.task import TaskRead
 from app.services.project import ProjectService
+from app.api.responses import PROJECT_NOT_FOUND_RESPONSE, PROJECT_NAME_CONFLICT_RESPONSE
 
 
 router = APIRouter(prefix="/projects", tags=["Project"])
@@ -14,6 +15,7 @@ router = APIRouter(prefix="/projects", tags=["Project"])
     "",
     response_model=ProjectRead,
     status_code=status.HTTP_201_CREATED,
+    responses=PROJECT_NAME_CONFLICT_RESPONSE,
 )
 def create_project(
     payload: ProjectCreate,
@@ -25,6 +27,7 @@ def create_project(
 @router.get(
     "/{project_id}",
     response_model=ProjectRead,
+    responses=PROJECT_NOT_FOUND_RESPONSE,
 )
 def get_project(
     project_id: int,
@@ -48,6 +51,7 @@ def get_projects(
 @router.get(
         "/{project_id}/tasks",
         response_model=list[TaskRead],
+        responses=PROJECT_NOT_FOUND_RESPONSE,
 )
 def get_project_tasks(
     project_id: int,
@@ -59,6 +63,10 @@ def get_project_tasks(
 @router.patch(
     "/{project_id}",
     response_model=ProjectRead,
+    responses={
+        **PROJECT_NOT_FOUND_RESPONSE,
+        **PROJECT_NAME_CONFLICT_RESPONSE,
+    }
 )
 def update_project(
     project_id: int,
@@ -71,6 +79,7 @@ def update_project(
 @router.delete(
     "/{project_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    responses=PROJECT_NOT_FOUND_RESPONSE,
 )
 def delete_project(
     project_id: int,

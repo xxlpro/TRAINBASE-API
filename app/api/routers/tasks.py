@@ -3,6 +3,11 @@ from fastapi import APIRouter, Depends, Query, status
 from app.api.dependencies import get_task_service
 from app.schemas import TaskCreate, TaskRead, TaskUpdate
 from app.services import TaskService
+from app.api.responses import (
+    PROJECT_NOT_FOUND_RESPONSE,
+    TASK_NOT_FOUND_RESPONSE,
+    TASK_OR_PROJECT_NOT_FOUND_RESPONSE,
+)
 
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
@@ -12,6 +17,7 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
     "",
     response_model=TaskRead,
     status_code=status.HTTP_201_CREATED,
+    responses=PROJECT_NOT_FOUND_RESPONSE,
 )
 def create_task(
     payload: TaskCreate,
@@ -35,6 +41,7 @@ def get_tasks(
 @router.get(
     "/{task_id}",
     response_model=TaskRead,
+    responses=TASK_NOT_FOUND_RESPONSE,
 )
 def get_task(
     task_id: int,
@@ -46,6 +53,7 @@ def get_task(
 @router.patch(
     "/{task_id}",
     response_model=TaskRead,
+    responses=TASK_OR_PROJECT_NOT_FOUND_RESPONSE,
 )
 def update_task(
     task_id: int,
@@ -58,6 +66,7 @@ def update_task(
 @router.delete(
     "/{task_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    responses=TASK_NOT_FOUND_RESPONSE,
 )
 def delete_task(
     task_id: int,

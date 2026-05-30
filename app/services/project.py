@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import ProjectNotFoundError
+from app.core.exceptions import ProjectNotFoundError, ProjectNameAlreadyExistsError
 from app.models.project import Project
 from app.models.task import Task
 from app.repositories.project import ProjectRepository
@@ -34,6 +34,11 @@ class ProjectService:
         return self.task_repository.get_by_project_id(project_id)
 
     def create_project(self, payload: ProjectCreate) -> Project:
+        existing_project = self.repository.get_by_name(payload.name)
+
+        if existing_project is not None:
+            raise ProjectNameAlreadyExistsError(payload.name)
+        
         try:
             project = self.repository.create(payload)
             self.db.commit()
@@ -49,6 +54,15 @@ class ProjectService:
         if project is None: 
             raise ProjectNotFoundError(project_id)
         
+        if "name" in payload.model_fields_set:
+            existing_project = self.repository.get_by_name_except_id(
+                payload.name,
+                project_id,
+        )
+
+        if existing_project is not None:
+            raise ProjectNameAlreadyExistsError(payload.name)
+
         try:
             updated_project = self.repository.update(project, payload)
             self.db.commit()
@@ -59,6 +73,7 @@ class ProjectService:
             raise
 
     def delete_project(self, project_id: int) -> None:
+        
         project = self.repository.get_by_id(project_id)
 
         if project is None:
@@ -71,4 +86,3 @@ class ProjectService:
             self.db.rollback()
             raise
 
-    
