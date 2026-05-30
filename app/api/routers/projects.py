@@ -5,7 +5,7 @@ from app.api.dependencies import get_project_service
 from app.schemas.project import ProjectCreate, ProjectRead, ProjectUpdate
 from app.schemas.task import TaskRead
 from app.services.project import ProjectService
-from app.api.responses import PROJECT_NOT_FOUND_RESPONSE
+from app.api.responses import PROJECT_NOT_FOUND_RESPONSE, PROJECT_NAME_CONFLICT_RESPONSE
 
 
 router = APIRouter(prefix="/projects", tags=["Project"])
@@ -15,6 +15,7 @@ router = APIRouter(prefix="/projects", tags=["Project"])
     "",
     response_model=ProjectRead,
     status_code=status.HTTP_201_CREATED,
+    responses=PROJECT_NAME_CONFLICT_RESPONSE,
 )
 def create_project(
     payload: ProjectCreate,
@@ -62,7 +63,10 @@ def get_project_tasks(
 @router.patch(
     "/{project_id}",
     response_model=ProjectRead,
-    responses=PROJECT_NOT_FOUND_RESPONSE,
+    responses={
+        **PROJECT_NOT_FOUND_RESPONSE,
+        **PROJECT_NAME_CONFLICT_RESPONSE,
+    }
 )
 def update_project(
     project_id: int,

@@ -42,3 +42,15 @@ class ProjectRepository:
     def delete(self, project: Project) -> None:
         self.db.delete(project)
         self.db.flush()
+
+    def get_by_name(self, name: str) -> Project | None:
+        stmt = select(Project).where(Project.name == name)
+        return self.db.scalar(stmt)
+
+
+    def get_by_name_except_id(self, name: str, project_id: int) -> Project | None:
+        stmt = select(Project).where(
+            Project.name == name,
+            Project.id != project_id,
+        )
+        return self.db.scalar(stmt)

@@ -26,3 +26,12 @@ class ProjectNotFoundError(AppError):
     def __init__(self, project_id: int) -> None:
         self.project_id = project_id
         super().__init__(f"Project with id={project_id} was not found")
+
+
+class ProjectNameAlreadyExistsError(AppError):
+    status_code = 409
+    code = "project_name_already_exists"
+
+    def __init__(self, name: str) -> None:
+        self.name = name
+        super().__init__(f"Project with name='{name}' already exists")

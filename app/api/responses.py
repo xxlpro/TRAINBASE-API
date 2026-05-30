@@ -69,3 +69,20 @@ TASK_OR_PROJECT_NOT_FOUND_RESPONSE = {
         },
     }
 }
+
+PROJECT_NAME_CONFLICT_RESPONSE = {
+    status.HTTP_409_CONFLICT: {
+        "model": ErrorResponse,
+        "description": "Project name already exists",
+        "content": {
+            "application/json": {
+                "example": {
+                    "error": {
+                        "code": "project_name_already_exists",
+                        "message": "Project with name='Backend Learning' already exists",
+                    }
+                }
+            }
+        },
+    }
+}
